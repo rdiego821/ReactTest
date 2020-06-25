@@ -4,10 +4,10 @@ import Results from "./Results";
 import useDropdown from "./useDropdown";
 
 const SearchParams = () => {
-  const [location, setLocation] = useState("Seattle, WA");
-  const [breeds, setBreeds] = useState([]);
+  const [location, updateLocation] = useState("Seattle, WA");
+  const [breeds, updateBreeds] = useState([]);
   const [animal, AnimalDropdown] = useDropdown("Animal", "dog", ANIMALS);
-  const [breed, BreedDropdown, setBreed] = useDropdown("Breed", "", breeds);
+  const [breed, BreedDropdown, updateBreed] = useDropdown("Breed", "", breeds);
   const [pets, setPets] = useState([]);
 
   async function requestPets() {
@@ -17,18 +17,19 @@ const SearchParams = () => {
       type: animal,
     });
 
+    console.log("animals", animals);
     setPets(animals || []);
   }
 
   useEffect(() => {
-    setBreeds([]);
-    setBreed("");
+    updateBreeds([]);
+    updateBreed("");
 
-    pet.breeds(animal).then(({ breeds: apiBreeds }) => {
-      const breedStrings = apiBreeds.map(({ name }) => name);
-      setBreeds(breedStrings);
+    pet.breeds(animal).then(({ breeds }) => {
+      const breedStrings = breeds.map(({ name }) => name);
+      updateBreeds(breedStrings);
     }, console.error);
-  }, [animal, setBreed, setBreeds]);
+  }, [animal]);
 
   return (
     <div className="search-params">
@@ -44,7 +45,7 @@ const SearchParams = () => {
             id="location"
             value={location}
             placeholder="Location"
-            onChange={(e) => setLocation(e.target.value)}
+            onChange={(e) => updateLocation(e.target.value)}
           />
         </label>
         <AnimalDropdown />
